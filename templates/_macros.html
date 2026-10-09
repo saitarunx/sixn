@@ -1,0 +1,4 @@
+{# Shows a highlighted gap when a business detail has not been configured yet. #}
+{% macro val(v, label) -%}
+{% if v %}{{ v }}{% else %}<span class="gap">[{{ label }} — set in .env]</span>{% endif %}
+{%- endmacro %}

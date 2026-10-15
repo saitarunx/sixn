@@ -106,7 +106,8 @@ integrations are disabled (`[STARTUP] Integrations:`), and turns the dependent f
 | `RETURN_WINDOW_DAYS` | `7` | Days after delivery a return can be requested (enforced and shown on `/returns`) |
 | `PHONE_LOGIN_ENABLED` | `0` | `1` = customers can sign up / log in with phone + OTP. `0` = guest checkout by email (admins can always sign in) |
 | `REQUIRE_EMAIL_CONFIRMATION` | `0` | `1` = guests must confirm their email first. Keep `0` until a confirmation email is implemented |
-| `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | empty | Google sign-in, once implemented in `services/auth_providers.py` |
+| `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | empty | "Continue with Google" (sign-in modal + checkout). Redirect URI: `<site>/auth/google/callback` |
+| `PUBLIC_BASE_URL` | empty | Site URL for OAuth redirect URIs in production, e.g. `https://ntslabel.com` |
 | `META_APP_ID`, `META_APP_SECRET` | empty | Facebook / Instagram sign-in, same as above |
 | `FLASK_DEBUG` | `0` | Development only; with no Twilio, OTPs are printed to the console |
 
@@ -115,8 +116,8 @@ integrations are disabled (`[STARTUP] Integrations:`), and turns the dependent f
 - **Guest checkout:** name, email and a mobile number for the courier. No login or OTP. Orders, carts and customer
   records are keyed by email (`customers`, `carts` collections; `orders.customer_email` + optional `orders.user_id`).
 - **Order status:** guests use `/track-order` with their email + order number.
-- **Social sign-in (later):** providers plug into `services/auth_providers.py`; `link_social_identity()` attaches earlier
-  guest orders with the same verified email to the signed-in account.
+- **Google sign-in:** optional "Continue with Google"; earlier guest orders with the same verified Gmail move into
+  the account (`link_social_identity()`). Meta can plug into the same seam in `services/auth_providers.py`.
 
 ---
 

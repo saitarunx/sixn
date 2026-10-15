@@ -1,3 +1,4 @@
+{% from "_macros.html" import google_button %}
 {% extends "base.html" %}
 
 {% block title %}Secure Checkout - NTS{% endblock %}
@@ -26,6 +27,12 @@
                 <!-- Contact: guest checkout by email (no login); signed-in customers get theirs prefilled -->
                 <div class="bg-[#111] p-8 rounded-sm border border-gray-800">
                     <h2 class="text-xl font-bold text-white uppercase tracking-widest mb-6">Contact Information</h2>
+                    {% if not current_user.is_authenticated and social_providers|selectattr('name', 'equalto', 'google')|list %}
+                    <div class="mb-6">
+                        {{ google_button('/checkout') }}
+                        <p class="text-[11px] text-gray-500 mt-2 text-center">Fills in your name and email. Or continue as a guest below.</p>
+                    </div>
+                    {% endif %}
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label for="contact-name" class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Full name *</label>

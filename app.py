@@ -22,6 +22,7 @@ import base64
 import threading
 from dotenv import load_dotenv
 from utils.config import env_value, env_flag
+from urllib.parse import urlencode
 
 coupon_lock = threading.Lock()
 user_lock = threading.Lock()
@@ -2695,6 +2696,22 @@ def save_cart():
     return jsonify({'status': 'success'})
 
 
+def _oauth_redirect_uri(provider):
+    """Must match the redirect URI registered with the provider exactly. PUBLIC_BASE_URL pins it behind proxies."""
+    base = env_value('PUBLIC_BASE_URL').rstrip('/')
+    path = url_for('social_callback', provider=provider)
+    return base + path if base else url_for('social_callback', provider=provider, _external=True)
+
+
+def _safe_next(target):
+    """Only allow redirects back to our own pages."""
+    return target if target and target.startswith('/') and not target.startswith('//') and '\\' not in target else None
+
+
+def _auth_failed(message):
+    return redirect('/?' + urlencode({'login': '1', 'auth_error': message}))
+
+
 @app.route('/auth/<provider>/login')
 def social_login(provider):
     p = AUTH_PROVIDERS.get(provider)
@@ -2702,7 +2719,8 @@ def social_login(provider):
         return jsonify({'error': f'{provider} sign-in is not enabled'}), 404
     state = uuid.uuid4().hex
     session['oauth_state'] = state
-    return redirect(p.authorize_url(state, url_for('social_callback', provider=provider, _external=True)))
+    session['oauth_next'] = _safe_next(request.args.get('next'))
+    return redirect(p.authorize_url(state, _oauth_redirect_uri(provider)))
 
 
 @app.route('/auth/<provider>/callback')
@@ -2710,16 +2728,18 @@ def social_callback(provider):
     p = AUTH_PROVIDERS.get(provider)
     if not p or not p.enabled:
         return jsonify({'error': f'{provider} sign-in is not enabled'}), 404
+    if request.args.get('error'):
+        return _auth_failed(f'{p.label} sign-in was cancelled.')
     if not request.args.get('state') or request.args.get('state') != session.pop('oauth_state', None):
-        return jsonify({'error': 'Sign-in expired, please try again'}), 400
+        return _auth_failed('Sign-in expired, please try again.')
     try:
-        identity = p.fetch_identity(request.args.get('code'), url_for('social_callback', provider=provider, _external=True))
+        identity = p.fetch_identity(request.args.get('code'), _oauth_redirect_uri(provider))
         user_id = link_social_identity(identity)
     except ValueError as e:
-        return jsonify({'error': str(e)}), 400
+        return _auth_failed(str(e))
     login_user(load_user(user_id), remember=True)
     session['customer_email'] = normalize_email(identity.email)
-    return redirect(url_for('my_orders'))
+    return redirect(session.pop('oauth_next', None) or url_for('my_orders'))
 
 
 # --- SHIPROCKET ROUTES ---

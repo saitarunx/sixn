@@ -7,16 +7,16 @@
 {% block policy_body %}
 <p class="mt-6">These are garment measurements, taken flat, in centimetres. To check your size, lay a tee you already like flat and compare.</p>
 {% if size_chart %}
-<table class="w-full mt-4 text-[13px] border border-black">
+<table class="w-full mt-4 text-[13px] border border-line">
     <thead>
-        <tr class="border-b border-black uppercase text-left">
+        <tr class="border-b border-line uppercase text-left">
             <th class="p-2">Size</th>
             {% for col in (size_chart.values()|first).keys() %}<th class="p-2">{{ col }}</th>{% endfor %}
         </tr>
     </thead>
     <tbody>
         {% for size, row in size_chart.items() %}
-        <tr class="border-b border-black last:border-0">
+        <tr class="border-b border-line last:border-0">
             <td class="p-2">{{ size }}</td>
             {% for v in row.values() %}<td class="p-2">{{ v }}</td>{% endfor %}
         </tr>

@@ -5,34 +5,68 @@
 
 {% block styles %}
 <style>
-    .plp-label { opacity: 0; transition: opacity .2s; }
-    .plp-item:hover .plp-label, .plp-item:focus-visible .plp-label { opacity: 1; }
-    .plp-item img { transition: transform .4s ease; }
-    .plp-item:hover img { transform: scale(1.03); }
-    @media (hover: none) { .plp-label { opacity: 1; } }
+    .plp-item img { transition: transform .6s cubic-bezier(.2,.7,.2,1), opacity .4s ease; }
+    .plp-item:hover img.plp-main { transform: scale(1.04); }
+    .plp-item .plp-alt { opacity: 0; }
+    .plp-item:hover .plp-alt { opacity: 1; }
+    .plp-item:hover .plp-name { color: var(--lime); }
 </style>
 {% endblock %}
 
 {% block content %}
-<main class="pt-16 min-h-[calc(100vh-4rem)] flex flex-col justify-center">
-    <h1 class="sr-only">NTS — Not That Simple. Shop tees.</h1>
+<main class="pt-16">
+    <!-- Brand statement (copy from ntslabel.com / @nts.label) -->
+    <section class="px-4 pt-14 pb-10 md:pt-20 md:pb-14 max-w-[1600px] mx-auto">
+        <p class="nts-kicker text-lime">Limited first release</p>
+        <h1 class="nts-display text-[44px] sm:text-[64px] lg:text-[96px] mt-4">Everyday luxury.<br>Streetwear precision.</h1>
+        <p class="nts-kicker text-muted mt-6">Crafted in India · Built with intent</p>
+    </section>
+
     {% if products %}
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 px-4 py-8 max-w-[1600px] w-full mx-auto">
+    <section aria-label="Shop" class="grid grid-cols-2 lg:grid-cols-4 gap-x-3 gap-y-10 px-4 pb-16 max-w-[1600px] mx-auto">
         {% for p in products %}
-        <a href="/product/{{ p.id }}" class="plp-item flex flex-col items-center text-center outline-none">
-            <div class="relative w-full aspect-square overflow-hidden bg-white">
+        {% set sold_out = p.inStock == false or p.soldOutEverywhere %}
+        <a href="/product/{{ p.id }}" class="plp-item group block">
+            <div class="relative aspect-[4/5] overflow-hidden bg-panel">
                 <img src="{{ p.image }}" alt="{{ p.name }}" loading="{{ 'eager' if loop.index <= 4 else 'lazy' }}"
-                    class="absolute inset-0 w-full h-full object-contain select-none">
-                {% if p.inStock == false or p.soldOutEverywhere %}
-                <span class="absolute top-2 left-2 uppercase text-[11px]">Sold out</span>
+                    class="plp-main absolute inset-0 w-full h-full object-cover select-none">
+                {% if p.images and p.images|length > 1 %}
+                <img src="{{ p.images[1] }}" alt="" aria-hidden="true" loading="lazy" class="plp-alt absolute inset-0 w-full h-full object-cover">
+                {% endif %}
+                {% if sold_out %}
+                <span class="absolute top-3 left-3 nts-kicker bg-paper/80 px-2 py-1">Sold out</span>
                 {% endif %}
             </div>
-            <p class="plp-label mt-2 uppercase text-[13px]">{{ p.code or p.name }}</p>
+            <div class="mt-3 flex items-start justify-between gap-3">
+                <div>
+                    <p class="nts-kicker text-muted">{{ p.code }}</p>
+                    <p class="plp-name mt-1 text-[14px] font-semibold uppercase tracking-[.04em] transition-colors">{{ p.name }}</p>
+                </div>
+                <p class="text-[14px] font-semibold whitespace-nowrap">₹{{ "{:,.0f}".format(p.price) }}</p>
+            </div>
         </a>
         {% endfor %}
-    </div>
+    </section>
     {% else %}
-    <p class="text-center uppercase text-[12px] text-[#6b6b6b]">Coming soon.</p>
+    <p class="px-4 pb-16 nts-kicker text-muted">Coming soon.</p>
     {% endif %}
+
+    <section class="border-t border-line-soft px-4 py-12 max-w-[1600px] mx-auto grid md:grid-cols-3 gap-8">
+        <div>
+            <p class="nts-kicker text-lime">01</p>
+            <p class="mt-2 font-semibold uppercase tracking-[.04em]">Heavyweight cotton</p>
+            <p class="mt-1 text-muted text-[13px]">Everyday essentials with a premium hand-feel.</p>
+        </div>
+        <div>
+            <p class="nts-kicker text-lime">02</p>
+            <p class="mt-2 font-semibold uppercase tracking-[.04em]">Sustainably made in India</p>
+            <p class="mt-1 text-muted text-[13px]">Crafted in India. Worn everywhere.</p>
+        </div>
+        <div>
+            <p class="nts-kicker text-lime">03</p>
+            <p class="mt-2 font-semibold uppercase tracking-[.04em]">Unbranded. Unapologetic.</p>
+            <p class="mt-1 text-muted text-[13px]">Free shipping over ₹1,000. UPI / Google Pay at checkout.</p>
+        </div>
+    </section>
 </main>
 {% endblock %}

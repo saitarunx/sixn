@@ -17,17 +17,17 @@
     <!-- STOCK -->
     <section class="mt-8" aria-labelledby="stock-h">
         <h2 id="stock-h" class="uppercase text-[12px] mb-2">Stock</h2>
-        <p class="text-[11px] text-[#6b6b6b] mb-3">On hand = units in your warehouse. Reserved = ordered, not yet picked up.</p>
+        <p class="text-[11px] text-muted mb-3">On hand = units in your warehouse. Reserved = ordered, not yet picked up.</p>
         <div class="overflow-x-auto">
-            <table class="w-full border border-black">
+            <table class="w-full border border-line">
                 <thead>
-                    <tr class="border-b border-black uppercase text-left text-[11px]">
+                    <tr class="border-b border-line uppercase text-left text-[11px]">
                         <th class="p-2">Product</th><th class="p-2">Size</th><th class="p-2">On hand</th><th class="p-2">Reserved</th><th class="p-2">Available</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for row in stock_rows %}{% for s in row.sizes %}
-                    <tr class="border-b border-[#e5e5e5]">
+                    <tr class="border-b border-line-soft">
                         <td class="p-2">{% if loop.first %}{{ row.product.code }} · {{ row.product.name }}{% endif %}</td>
                         <td class="p-2">{{ s.size }}</td>
                         <td class="p-2">
@@ -38,7 +38,7 @@
                             </form>
                         </td>
                         <td class="p-2">{{ s.reserved }}</td>
-                        <td class="p-2 {{ 'text-red-600' if s.available == 0 }}">{{ '∞' if s.available is none else s.available }}</td>
+                        <td class="p-2 {{ 'text-red-400' if s.available == 0 }}">{{ '∞' if s.available is none else s.available }}</td>
                     </tr>
                     {% endfor %}{% endfor %}
                 </tbody>
@@ -48,25 +48,25 @@
 
     <!-- ORDERS BY STAGE -->
     <section class="mt-10">
-        <nav class="flex flex-wrap gap-4 border-b border-black uppercase text-[12px]" aria-label="Stages">
+        <nav class="flex flex-wrap gap-4 border-b border-line uppercase text-[12px]" aria-label="Stages">
             {% for key, name in stage_names %}
-            <a href="?stage={{ key }}" class="pb-2 {{ 'border-b-2 border-black' if key == active else 'opacity-40' }}">{{ name }} ({{ stages[key]|length }})</a>
+            <a href="?stage={{ key }}" class="pb-2 {{ 'border-b-2 border-line' if key == active else 'opacity-40' }}">{{ name }} ({{ stages[key]|length }})</a>
             {% endfor %}
         </nav>
 
         {% for o in stages.get(active, []) %}
         {% set a = o.address or {} %}
-        <article class="border-b border-[#e5e5e5] py-4 grid md:grid-cols-[1fr_1fr_auto] gap-3">
+        <article class="border-b border-line-soft py-4 grid md:grid-cols-[1fr_1fr_auto] gap-3">
             <div>
                 <p class="uppercase">#{{ o.razorpay_order_id or o.id[:8] }} · {{ (o.created_at or '')[:10] }}</p>
-                <p class="text-[#6b6b6b] uppercase text-[11px]">{{ o.payment_method }} · {{ o.status }}{% if o.tracking_status %} · {{ o.tracking_status }}{% endif %}{% if o.delivery_issue %} · <span class="text-red-600">{{ o.delivery_issue }}</span>{% endif %}{% if o.coupon_over_limit %} · <span class="text-red-600">coupon over limit</span>{% endif %}</p>
+                <p class="text-muted uppercase text-[11px]">{{ o.payment_method }} · {{ o.status }}{% if o.tracking_status %} · {{ o.tracking_status }}{% endif %}{% if o.delivery_issue %} · <span class="text-red-400">{{ o.delivery_issue }}</span>{% endif %}{% if o.coupon_over_limit %} · <span class="text-red-400">coupon over limit</span>{% endif %}</p>
                 <ul class="mt-1">
                     {% for i in o['items'] %}<li>{{ i.code or i.name }} · {{ i.selectedSize or '-' }} × {{ i.quantity }}</li>{% endfor %}
                 </ul>
             </div>
             <div>
                 <p>{{ a.name }}</p>
-                <p class="text-[#6b6b6b]">{{ a.city }}, {{ a.state }} {{ a.zip }}</p>
+                <p class="text-muted">{{ a.city }}, {{ a.state }} {{ a.zip }}</p>
                 <p class="text-[11px] mt-1">AWB: {{ o.awb_code or '—' }}</p>
             </div>
             <div class="flex md:flex-col gap-2 uppercase text-[11px] items-start">
@@ -87,7 +87,7 @@
             </div>
         </article>
         {% else %}
-        <p class="py-6 uppercase text-[12px] text-[#6b6b6b]">Nothing here.</p>
+        <p class="py-6 uppercase text-[12px] text-muted">Nothing here.</p>
         {% endfor %}
     </section>
 </main>

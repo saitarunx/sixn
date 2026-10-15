@@ -1,3 +1,4 @@
+{% from "_macros.html" import google_button %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -7,82 +8,107 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{% block title %}NTS — NOT THAT SIMPLE{% endblock %}</title>
     <meta name="description" content="NTS — Not That Simple.">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23000'/><text x='16' y='21' font-family='monospace' font-size='11' fill='%23fff' text-anchor='middle'>NTS</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23070809'/><text x='16' y='21' font-family='Arial' font-weight='800' font-size='11' fill='%23f5f5f2' text-anchor='middle'>NTS</text></svg>">
 
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // NTS brand tokens (from ntslabel.com): near-black, off-white, lime accent, Inter
+        tailwind.config = { theme: { extend: {
+            colors: { paper: '#070809', panel: '#101211', ink: '#f5f5f2', muted: '#9a9d9a', lime: '#a4d63a',
+                      line: 'rgba(245,245,242,.20)', 'line-soft': 'rgba(245,245,242,.10)' },
+            fontFamily: { sans: ['Inter', 'Arial', 'sans-serif'] }
+        } } };
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
+    <meta name="theme-color" content="#070809">
 
     <style>
         :root {
             --navbar-height: 64px;
-            --ink: #000;
-            --paper: #fff;
-            --muted: #6b6b6b;
-            --line: #000;
+            --bg: #070809;
+            --panel: #101211;
+            --text: #f5f5f2;
+            --muted: #9a9d9a;
+            --line: rgba(245,245,242,.20);
+            --line-soft: rgba(245,245,242,.10);
+            --lime: #a4d63a;
         }
 
         html, body {
-            background: var(--paper);
-            color: var(--ink);
-            font-family: 'IBM Plex Mono', ui-monospace, monospace;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', Arial, sans-serif;
             font-size: 14px;
             margin: 0;
             -webkit-font-smoothing: antialiased;
+            text-rendering: optimizeLegibility;
         }
 
-        ::selection { background: #000; color: #fff; }
+        ::selection { background: var(--lime); color: var(--bg); }
+        :focus-visible { outline: 2px solid var(--lime); outline-offset: 2px; }
 
-        .font-display, .font-sans { font-family: 'IBM Plex Mono', ui-monospace, monospace !important; letter-spacing: 0 !important; }
+        .font-display { font-family: 'Inter', Arial, sans-serif !important; font-weight: 800 !important; letter-spacing: -.025em !important; }
+        .nts-display { font-weight: 800; letter-spacing: -.025em; text-transform: uppercase; line-height: .95; }
+        .nts-kicker { font-size: 11px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; }
 
         .nts-btn {
-            display: block; width: 100%; padding: 14px 16px; text-align: center;
-            background: #000; color: #fff; border: 1px solid #000;
-            text-transform: uppercase; font-size: 13px; letter-spacing: .04em; cursor: pointer;
+            display: block; width: 100%; padding: 15px 16px; text-align: center;
+            background: var(--lime); color: var(--bg); border: 1px solid var(--lime);
+            text-transform: uppercase; font-size: 12px; font-weight: 600; letter-spacing: .14em; cursor: pointer;
+            transition: opacity .2s, background .2s, color .2s;
         }
-        .nts-btn:hover { opacity: .8; }
-        .nts-btn:disabled { opacity: .3; cursor: not-allowed; }
-        .nts-btn-ghost { background: #fff; color: #000; }
+        .nts-btn:hover { opacity: .88; }
+        .nts-btn:disabled { background: transparent; color: var(--muted); border-color: var(--line); opacity: 1; cursor: not-allowed; }
+        .nts-btn-ghost { background: transparent; color: var(--text); border-color: var(--line); }
+        .nts-btn-ghost:hover { border-color: var(--text); opacity: 1; }
 
         .nts-input {
-            width: 100%; background: #fff; color: #000; border: 1px solid #000; border-radius: 0;
-            padding: 12px; font: inherit; outline: none;
+            width: 100%; background: var(--panel); color: var(--text); border: 1px solid var(--line); border-radius: 0;
+            padding: 12px; font: inherit; outline: none; transition: border-color .2s;
         }
-        .nts-input:focus { box-shadow: inset 0 0 0 1px #000; }
-        .nts-label { display: block; font-size: 11px; text-transform: uppercase; margin-bottom: 6px; color: var(--muted); }
+        .nts-input:focus { border-color: var(--lime); }
+        .nts-label { display: block; font-size: 11px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 6px; color: var(--muted); }
 
-        .nts-link { text-transform: uppercase; font-size: 12px; }
-        .nts-link:hover { opacity: .6; }
+        .nts-link { text-transform: uppercase; font-size: 12px; font-weight: 600; letter-spacing: .12em; transition: color .2s; }
+        .nts-link:hover { color: var(--lime); }
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: #2a2d2b; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
 
         #toast-notification { transition: transform .3s ease, opacity .3s ease; }
 
-        /* --- Legacy layer: maps the old dark utility classes on inner pages to the NTS light theme. ---
-           Pages rebuilt for NTS (home, product) opt out by overriding {% raw %}{% block theme_class %}{% endraw %}. */
-        .legacy { background: #fff; }
-        .legacy [class*="bg-[#0"], .legacy [class*="bg-[#1"], .legacy .bg-\[\#333\], .legacy .bg-gray-800, .legacy .bg-gray-900,
-        .legacy .bg-black, .legacy .bg-white\/5, .legacy [class*="bg-black/"] { background-color: #fff !important; }
-        .legacy .bg-\[\#1a1a1a\], .legacy .bg-\[\#151515\] { background-color: #fff !important; border: 1px solid #000; }
-        .legacy .text-white, .legacy .text-gray-200, .legacy .text-gray-300 { color: #000 !important; }
-        .legacy .text-gray-400, .legacy .text-gray-500, .legacy .text-gray-600, .legacy .text-gray-700 { color: #6b6b6b !important; }
-        .legacy [class*="text-[#AB0A17]"], .legacy [class*="text-[#C4A35A]"] { color: #000 !important; }
-        .legacy [class*="border-gray-"], .legacy [class*="border-white/"], .legacy [class*="border-[#AB0A17]"] { border-color: #000 !important; }
-        .legacy [class*="border-gray-8"], .legacy [class*="border-gray-9"], .legacy [class*="border-white/5"] { border-color: #e5e5e5 !important; }
+        /* --- Legacy layer: maps the old SIXN utility classes on not-yet-rebuilt pages (account, wallet, checkout,
+           admin) onto the NTS tokens. Rebuilt pages opt out by overriding {% raw %}{% block theme_class %}{% endraw %}. */
+        .legacy { background: var(--bg); }
+        .legacy [class*="bg-[#0"], .legacy .bg-black, .legacy .bg-gray-900, .legacy [class*="bg-black/"] { background-color: var(--bg) !important; }
+        .legacy [class*="bg-[#1"], .legacy .bg-\[\#333\], .legacy .bg-gray-800, .legacy .bg-white\/5 { background-color: var(--panel) !important; }
+        .legacy .text-white, .legacy .text-gray-200, .legacy .text-gray-300 { color: var(--text) !important; }
+        .legacy .text-gray-400, .legacy .text-gray-500, .legacy .text-gray-600, .legacy .text-gray-700 { color: var(--muted) !important; }
+        .legacy [class*="text-[#AB0A17]"], .legacy [class*="text-[#C4A35A]"], .legacy .text-green-500 { color: var(--lime) !important; }
+        .legacy [class*="border-gray-"], .legacy [class*="border-white/"] { border-color: var(--line-soft) !important; }
+        .legacy [class*="border-gray-6"], .legacy [class*="border-gray-7"] { border-color: var(--line) !important; }
+        .legacy [class*="border-[#AB0A17]"]:not([class*="hover:border"]):not([class*="focus:border"]) { border-color: var(--lime) !important; }
         .legacy [class*="from-"], .legacy [class*="to-"] { --tw-gradient-from: transparent !important; --tw-gradient-to: transparent !important; }
         .legacy .rounded, .legacy .rounded-sm, .legacy .rounded-md, .legacy .rounded-lg, .legacy .rounded-xl, .legacy .rounded-2xl { border-radius: 0 !important; }
         .legacy [class*="shadow"] { box-shadow: none !important; }
-        /* Solid action buttons become black-on-white inverse */
-        .legacy .bg-white, .legacy [class~="bg-[#AB0A17]"] { background-color: #000 !important; color: #fff !important; }
-        .legacy .bg-white *, .legacy [class~="bg-[#AB0A17]"] * { color: #fff !important; }
-        .legacy [class*=" bg-[#AB0A17]/"], .legacy [class^="bg-[#AB0A17]/"] { background-color: #f2f2f2 !important; }
-        .legacy .peer:checked ~ [class*="peer-checked:bg-"] { background-color: #000 !important; }
-        .legacy [class*="hover:bg-"]:hover { opacity: .8; }
-        .legacy input, .legacy select, .legacy textarea { color: #000 !important; background: #fff !important; border-color: #000 !important; border-radius: 0 !important; }
-        .legacy input::placeholder, .legacy textarea::placeholder { color: #9a9a9a !important; }
-        .legacy h1, .legacy h2, .legacy h3 { font-weight: 500 !important; }
+        /* Solid action buttons (white or SIXN red) become the lime NTS button */
+        .legacy .bg-white, .legacy [class~="bg-[#AB0A17]"] { background-color: var(--lime) !important; color: var(--bg) !important; }
+        .legacy .bg-white *, .legacy [class~="bg-[#AB0A17]"] * { color: var(--bg) !important; }
+        .legacy [class*=" bg-[#AB0A17]/"], .legacy [class^="bg-[#AB0A17]/"] { background-color: rgba(164,214,58,.12) !important; }
+        .legacy .peer:checked ~ [class*="peer-checked:bg-"] { background-color: var(--lime) !important; border-color: var(--lime) !important; }
+        .legacy .peer:checked ~ [class*="peer-checked:border-"] { border-color: var(--lime) !important; }
+        .legacy [class*="hover:bg-"]:hover { opacity: .88; }
+        .legacy input, .legacy select, .legacy textarea { color: var(--text) !important; background: var(--panel) !important; border-color: var(--line) !important; border-radius: 0 !important; }
+        .legacy input:focus, .legacy select:focus, .legacy textarea:focus { border-color: var(--lime) !important; }
+        .legacy input::placeholder, .legacy textarea::placeholder { color: #5f625f !important; }
+        .legacy h1, .legacy h2 { font-weight: 800 !important; letter-spacing: -.025em !important; }
+        .legacy h3 { font-weight: 600 !important; }
+        .legacy label, .legacy .uppercase { letter-spacing: .12em; }
     </style>
 
     {# Kept as an empty hook: some legacy pages override it. #}
@@ -93,13 +119,13 @@
 <body class="w-full min-h-screen relative {% block body_classes %}{% endblock %}">
 
     <!-- HEADER: menu (left) · wordmark (centre) · cart (right) -->
-    <nav id="main-navbar" class="fixed top-0 left-0 z-50 w-full h-16 bg-white flex items-center justify-between px-4">
+    <nav id="main-navbar" class="fixed top-0 left-0 z-50 w-full h-16 bg-paper/85 backdrop-blur-md border-b border-line-soft flex items-center justify-between px-4">
         <button id="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Menu" class="h-12 w-12 -ml-3 flex flex-col items-center justify-center gap-[5px]">
-            <span class="block h-[2px] w-4 bg-black"></span>
-            <span class="block h-[2px] w-4 bg-black"></span>
+            <span class="block h-[2px] w-4 bg-ink"></span>
+            <span class="block h-[2px] w-4 bg-ink"></span>
         </button>
 
-        <a href="/" class="absolute left-1/2 -translate-x-1/2 uppercase tracking-[.2em] text-[13px] font-medium">NTS</a>
+        <a href="/" class="absolute left-1/2 -translate-x-1/2 text-[18px] font-extrabold tracking-[.16em]" aria-label="NTS home">NTS</a>
 
         <div class="flex items-center gap-5">
             {% if phone_login_enabled or social_providers or current_user.is_authenticated %}
@@ -113,7 +139,7 @@
 
     <!-- TOAST -->
     <div id="toast-notification" class="fixed top-20 left-1/2 -translate-x-1/2 z-[200] opacity-0 pointer-events-none translate-y-[-150%]">
-        <div class="bg-white border border-black px-4 py-3 flex items-center gap-3 min-w-[280px] max-w-[90vw]">
+        <div class="bg-paper border border-line px-4 py-3 flex items-center gap-3 min-w-[280px] max-w-[90vw]">
             <div id="toast-icon" class="shrink-0"></div>
             <div>
                 <p id="toast-title" class="uppercase text-[11px]"></p>
@@ -123,29 +149,29 @@
     </div>
 
     <!-- MENU PANEL -->
-    <div id="mobile-menu" class="fixed inset-0 z-[100] bg-white -translate-x-full transition-transform duration-300 flex flex-col">
+    <div id="mobile-menu" class="fixed inset-0 z-[100] bg-paper -translate-x-full transition-transform duration-300 flex flex-col">
         <div class="h-16 flex items-center justify-between px-4">
             <button onclick="toggleMobileMenu()" aria-label="Close menu" class="nts-link">Close</button>
-            <span class="uppercase tracking-[.2em] text-[13px] font-medium">NTS</span>
+            <span class="text-[18px] font-extrabold tracking-[.16em]">NTS</span>
             <span class="w-10"></span>
         </div>
-        <nav class="flex-1 flex flex-col items-center justify-center gap-6 uppercase text-[15px]">
-            <a href="/" onclick="toggleMobileMenu()" class="hover:opacity-60">Shop</a>
+        <nav class="flex-1 flex flex-col items-center justify-center gap-5 nts-display text-[28px]">
+            <a href="/" onclick="toggleMobileMenu()" class="hover:text-lime transition-colors">Shop</a>
             <a href="/orders" class="hover:opacity-60 auth-only hidden">Orders</a>
             <a href="/addresses" class="hover:opacity-60 auth-only hidden">Addresses</a>
             <a href="/settings" class="hover:opacity-60 auth-only hidden">Account</a>
-            <a href="/track-order" class="hover:opacity-60">Order Status</a>
+            <a href="/track-order" class="hover:text-lime transition-colors">Order Status</a>
             {% if current_user.is_authenticated and current_user.is_admin %}
-            <a href="/admin" class="hover:opacity-60">Admin</a>
-            <a href="/admin/fulfilment" class="hover:opacity-60">Fulfilment</a>
+            <a href="/admin" class="hover:text-lime transition-colors">Admin</a>
+            <a href="/admin/fulfilment" class="hover:text-lime transition-colors">Fulfilment</a>
             {% endif %}
-            <a href="/size-guide" class="hover:opacity-60">Size Guide</a>
-            <a href="/contact" class="hover:opacity-60">Contact</a>
+            <a href="/size-guide" class="hover:text-lime transition-colors">Size Guide</a>
+            <a href="/contact" class="hover:text-lime transition-colors">Contact</a>
             {% if phone_login_enabled or social_providers or current_user.is_authenticated %}
             <button id="mobile-user-btn" onclick="toggleMobileMenu(); CURRENT_USER ? handleLogout() : toggleAuth()" class="uppercase hover:opacity-60">Log in</button>
             {% endif %}
         </nav>
-        <p class="text-center text-[11px] uppercase text-[#6b6b6b] pb-8">Not That Simple</p>
+        <p class="text-center nts-kicker text-muted pb-8">Not That Simple™ · Crafted in India</p>
     </div>
 
     <!-- CONTENT (pages not yet rebuilt for NTS keep the "legacy" theme mapping) -->
@@ -155,28 +181,42 @@
 
     <!-- FOOTER -->
     {% block footer %}
-    <footer class="w-full py-6 px-4">
-        <ul class="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 uppercase text-[11px]">
-            <li><a href="/contact" class="hover:opacity-60">Contact</a></li>
-            <li><a href="/terms" class="hover:opacity-60">Terms</a></li>
-            <li><a href="/privacy" class="hover:opacity-60">Privacy</a></li>
-            <li><a href="/returns" class="hover:opacity-60">Returns</a></li>
-            <li><a href="/shipping" class="hover:opacity-60">Shipping</a></li>
-            <li><a href="/size-guide" class="hover:opacity-60">Size Guide</a></li>
-            <li><a href="/track-order" class="hover:opacity-60">Order Status</a></li>
-            <li class="text-[#6b6b6b]">© {{ 2026 }} NTS</li>
+    <footer class="w-full py-8 px-4 border-t border-line-soft">
+        <p class="text-center nts-kicker text-muted mb-4">Not That Simple™ — Unbranded. Unapologetic.</p>
+        <ul class="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 nts-kicker">
+            <li><a href="/contact" class="hover:text-lime transition-colors">Contact</a></li>
+            <li><a href="/terms" class="hover:text-lime transition-colors">Terms</a></li>
+            <li><a href="/privacy" class="hover:text-lime transition-colors">Privacy</a></li>
+            <li><a href="/returns" class="hover:text-lime transition-colors">Returns</a></li>
+            <li><a href="/shipping" class="hover:text-lime transition-colors">Shipping</a></li>
+            <li><a href="/size-guide" class="hover:text-lime transition-colors">Size Guide</a></li>
+            <li><a href="/track-order" class="hover:text-lime transition-colors">Order Status</a></li>
+            <li class="text-muted">© {{ 2026 }} NTS</li>
         </ul>
     </footer>
     {% endblock %}
 
     <!-- AUTH MODAL (phone + OTP) -->
-    <div id="auth-overlay" class="fixed inset-0 z-[110] bg-white/80 hidden flex items-center justify-center p-4 transition-opacity duration-300 opacity-0"
+    <div id="auth-overlay" class="fixed inset-0 z-[110] bg-paper/80 hidden flex items-center justify-center p-4 transition-opacity duration-300 opacity-0"
         onclick="if(event.target === this) toggleAuth()">
-        <div class="bg-white border border-black w-full max-w-sm p-6 relative" role="dialog" aria-modal="true" aria-label="Log in">
+        <div class="bg-paper border border-line w-full max-w-sm p-6 relative" role="dialog" aria-modal="true" aria-label="Log in">
             <button onclick="toggleAuth()" aria-label="Close" class="absolute top-3 right-4 nts-link">Close</button>
 
+            {% set google_on = social_providers|selectattr('name', 'equalto', 'google')|list %}
+            {% if google_on %}
+            <p class="nts-display text-[24px]">Sign in</p>
+            <p class="text-muted text-[13px] mt-2 mb-5">See your orders and check out faster. Orders you placed as a guest with the same Gmail are added to your account.</p>
+            {{ google_button(request.path if request.path != '/' else '') }}
+            {% endif %}
+            {% set phone_collapsed = google_on and not phone_login_enabled %}
+            {% if phone_collapsed %}
+            <details id="phone-auth" class="mt-6 border-t border-line-soft pt-4" {{ 'open' if request.args.get('next', '').startswith('/admin') }}>
+                <summary class="nts-kicker text-muted cursor-pointer select-none">Admin sign-in with phone</summary>
+                <div class="mt-4">
+            {% endif %}
+
             <div id="auth-tabs" class="flex gap-6 mb-6 uppercase text-[12px]">
-                <button onclick="switchAuthTab('login')" id="tab-login" class="pb-1 border-b border-black">Log in</button>
+                <button onclick="switchAuthTab('login')" id="tab-login" class="pb-1 border-b border-line">Log in</button>
                 <button onclick="switchAuthTab('signup')" id="tab-signup" class="pb-1 border-b border-transparent opacity-40 {{ '' if phone_login_enabled else 'hidden' }}">Sign up</button>
             </div>
 
@@ -258,29 +298,34 @@
                 </div>
             </div>
 
-            {% for p in social_providers %}
+            {% if phone_collapsed %}
+                </div>
+            </details>
+            {% endif %}
+
+            {% for p in social_providers if p.name != 'google' %}
             <a href="/auth/{{ p.name }}/login" class="nts-btn nts-btn-ghost mt-3">Continue with {{ p.label }}</a>
             {% endfor %}
 
-            <p id="auth-error" class="text-red-600 text-[12px] mt-4 hidden" role="alert"></p>
+            <p id="auth-error" class="text-red-400 text-[12px] mt-4 hidden" role="alert"></p>
         </div>
     </div>
 
     <!-- CART DRAWER -->
-    <div id="cart-backdrop" onclick="toggleCart()" class="fixed inset-0 bg-white/60 z-[55] hidden transition-opacity duration-300 opacity-0"></div>
+    <div id="cart-backdrop" onclick="toggleCart()" class="fixed inset-0 bg-paper/70 z-[55] hidden transition-opacity duration-300 opacity-0"></div>
     <aside id="cart-sidebar" aria-label="Cart"
-        class="fixed top-0 right-0 h-full w-[420px] max-w-full bg-white border-l border-black z-[60] translate-x-full transition-transform duration-300 flex flex-col">
-        <div class="h-16 px-4 flex justify-between items-center border-b border-black">
+        class="fixed top-0 right-0 h-full w-[420px] max-w-full bg-paper border-l border-line z-[60] translate-x-full transition-transform duration-300 flex flex-col">
+        <div class="h-16 px-4 flex justify-between items-center border-b border-line">
             <h2 class="uppercase text-[13px]">Cart</h2>
             <button onclick="toggleCart()" class="nts-link">Close</button>
         </div>
         <div id="cart-items" class="flex-1 overflow-y-auto"></div>
-        <div class="p-4 border-t border-black space-y-3">
+        <div class="p-4 border-t border-line space-y-3">
             <div class="flex justify-between uppercase text-[13px]">
                 <span>Subtotal</span>
                 <span id="cart-total">₹0</span>
             </div>
-            <p class="text-[11px] uppercase text-[#6b6b6b]">Shipping calculated at checkout. UPI / Google Pay, cards, netbanking.</p>
+            <p class="text-[11px] uppercase text-muted">Shipping calculated at checkout. UPI / Google Pay, cards, netbanking.</p>
             <button id="checkout-btn" onclick="proceedToCheckout()" class="nts-btn">Checkout</button>
         </div>
     </aside>
@@ -371,8 +416,8 @@
             const login = tab === 'login';
             document.getElementById('form-login').classList.toggle('hidden', !login);
             document.getElementById('form-signup').classList.toggle('hidden', login);
-            document.getElementById('tab-login').className = 'pb-1 border-b ' + (login ? 'border-black' : 'border-transparent opacity-40');
-            document.getElementById('tab-signup').className = 'pb-1 border-b ' + (login ? 'border-transparent opacity-40' : 'border-black');
+            document.getElementById('tab-login').className = 'pb-1 border-b ' + (login ? 'border-line' : 'border-transparent opacity-40');
+            document.getElementById('tab-signup').className = 'pb-1 border-b ' + (login ? 'border-transparent opacity-40' : 'border-line');
         }
 
         function showError(msg) {
@@ -661,20 +706,20 @@
             const container = document.getElementById('cart-items');
             cart.forEach(i => { i.selected = true; });  // no per-item selection in NTS; checkout takes the whole cart
             if (cart.length === 0) {
-                container.innerHTML = '<p class="p-4 uppercase text-[12px] text-[#6b6b6b]">Your cart is empty.</p>';
+                container.innerHTML = '<p class="p-4 uppercase text-[12px] text-muted">Your cart is empty.</p>';
             } else {
                 container.innerHTML = cart.map((item, index) => `
-                    <div class="flex gap-4 p-4 border-b border-black">
-                        <a href="/product/${item.id}" class="w-24 h-24 flex-shrink-0 bg-white">
+                    <div class="flex gap-4 p-4 border-b border-line">
+                        <a href="/product/${item.id}" class="w-24 h-24 flex-shrink-0 bg-paper">
                             <img src="${item.image}" alt="${item.name}" class="w-full h-full object-contain">
                         </a>
                         <div class="flex-1 flex flex-col justify-between uppercase text-[12px]">
                             <div>
                                 <p>${item.name}</p>
-                                ${item.selectedSize ? `<p class="text-[#6b6b6b]">Size ${item.selectedSize}</p>` : ''}
+                                ${item.selectedSize ? `<p class="text-muted">Size ${item.selectedSize}</p>` : ''}
                             </div>
                             <div class="flex justify-between items-center">
-                                <div class="flex items-center border border-black">
+                                <div class="flex items-center border border-line">
                                     <button onclick="updateQuantity(${index}, -1)" aria-label="Decrease quantity" class="w-7 h-7">−</button>
                                     <span class="w-6 text-center">${item.quantity || 1}</span>
                                     <button onclick="updateQuantity(${index}, 1)" aria-label="Increase quantity" class="w-7 h-7" ${(item.quantity || 1) >= 10 ? 'disabled' : ''}>+</button>
@@ -731,7 +776,8 @@
         document.addEventListener('DOMContentLoaded', () => {
             updateBadge();
             const q = new URLSearchParams(location.search);
-            if ((q.get('login') === '1' || q.has('next')) && !CURRENT_USER) toggleAuth();  // sent here by an admin page
+            if ((q.get('login') === '1' || q.has('next')) && !CURRENT_USER) toggleAuth();  // sent here by an admin page or a failed sign-in
+            if (q.get('auth_error')) showError(q.get('auth_error'));
         });
 
     </script>
